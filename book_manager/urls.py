@@ -20,7 +20,7 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path("admin/", admin.site.urls),  
+    #path("admin/", admin.site.urls),  
     path("list", book_list, name="book_list"),
     path("add/<str:name>/<str:author>/<slug:date>/<str:price>", addbook, name="add"),
     
@@ -30,8 +30,11 @@ urlpatterns = [
     path("d/n/<str:d_name>/<int:d_num>/", del_book_name_m, name="del_book_name_m"),
     path("d/a/<str:d_author>/<int:d_num>/", del_book_author_m, name="del_book_author_m"),
 
+    path("title/<str:title_name>", title_input, name="title_name"),
+    path("title_filter", ac_title_filter, name="title_filter"),
+
     path("author/<str:author_name>", author_input, name="author_name"),
-    path("author_filter", author_filter, name="author_filter"),
+    path("author_filter", ac_author_filter, name="author_filter"),
 
     path("up/<int:u_id>/<str:u_name>/<str:u_author>/<slug:u_date>/<str:u_price>", update_book_data, name="update_book_data"),
 

@@ -20,22 +20,37 @@ def book_list(request):
         })
     return JsonResponse(templist, safe=False)
 
+def title_input(request, title_name):
+    request.session['title'] = title_name
+    return redirect('title_filter')
+
+def ac_title_filter(request):
+    title_name = request.session.get('title', None)
+    if title_name: 
+        book = BookData.objects.filter(name__icontains=title_name).values("name", "author", "date", "price")
+        if book.exists():
+            return JsonResponse(list(book), safe=False)
+        else:
+            return JsonResponse({'Error': 'Sorry, the title cannot be found'})
+    else:
+        return JsonResponse({'Error':'Please add the book first'})
+
 def author_input(request, author_name):
-    request.session['author_name'] = author_name
+    request.session['author'] = author_name
     return redirect('author_filter')
 
-def author_filter(request):
+def ac_author_filter(request):
     # if request.method == "POST":
     #     ser_author = request.POST.get("author_input")
-    ser_author = request.session.get('author_name', None)
+    ser_author = request.session.get('author', None)
     if ser_author:
-        author_filter_book =  BookData.objects.filter(author = ser_author).values("name", "author", "date", "price")
+        author_filter_book =  BookData.objects.filter(author__icontains = ser_author).values("name", "author", "date", "price")
         if author_filter_book.exists():
             return JsonResponse(list(author_filter_book), safe=False)
         else:
             return JsonResponse({'Error': 'Sorry, the author cannot be found'})
     else:
-        return JsonResponse({'Error': 'Please enter the author'})
+        return JsonResponse({'Error': 'Please add the author first'})
     # else:
     #     return JsonResponse("")           
 
@@ -116,7 +131,7 @@ def update_book_data(request, u_id, u_name, u_author, u_date, u_price):
 
 
 
-
+#The following code isn't being used right now
 def save_book_data(request):
     book_name = request.POST.get('book_name')
     book_author = request.POST.get('book_author')
