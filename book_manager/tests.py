@@ -19,12 +19,37 @@ class BookTest(TestCase):
         data = response.json()
         print(f"list:{data}")
 
+    def testbooklist_title(self):
+        response = self.client.get(reverse("book_list_title"))
+
+        data = response.json()
+        print(f"list_title:{data}")
+
+    def testbooklist_price_i(self):
+        response = self.client.get(reverse("book_list_price_i"))
+
+        data = response.json()
+        print(f"list_price+:{data}")
+
+    def testbooklist_price_d(self):
+        response = self.client.get(reverse("book_list_price_d"))
+
+        data = response.json()
+        print(f"list_price-:{data}")
+
     def testauthorfilter(self):
-        self.client.get(reverse("author_name", kwargs={"author_name": "Wen"}))
+        self.client.get(reverse("title_name", kwargs={"title_name": "test"}))
+        response = self.client.get(reverse("title_filter"))
+
+        data = response.json()
+        print(f"title_filter:{data}")
+
+    def testauthorfilter(self):
+        self.client.get(reverse("author_name", kwargs={"author_name": "en"}))
         response = self.client.get(reverse("author_filter"))
 
         data = response.json()
-        print(f"filter:{data}")
+        print(f"author_filter:{data}")
 
     def testdelname(self):
         self.client.get(reverse("del_book_name", kwargs={"d_name": "Test3"}))

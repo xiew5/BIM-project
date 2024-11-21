@@ -6,19 +6,40 @@ from .models import BookData
 import json
 # Create your views here.
 
-def book_list(request):
-    allbook = BookData.objects.all()
+def view_url404(request, exception):
+    return JsonResponse({'Error':'Invalid URL'}, status=404)
 
-    templist = []
-    for book in allbook:
-        templist.append({
-            'id': book.id,
-            'name': book.name,
-            'author': book.author,
-            'date': book.date,
-            'price': book.price,
-        })
-    return JsonResponse(templist, safe=False)
+def book_list(request):
+    try:
+        allbook = list(BookData.objects.all().values("id","name", "author", "date", "price"))
+
+        return JsonResponse(allbook, safe=False)
+    except:
+        return JsonResponse({'Error':'Please add the book first'}, status=404)
+    
+def book_list_title(request):
+    try:
+        allbook = list(BookData.objects.all().order_by('name').values("id","name", "author", "date", "price"))
+
+        return JsonResponse(allbook, safe=False)
+    except:
+        return JsonResponse({'Error':'Please add the book first'}, status=404)
+    
+def book_list_price_i(request):
+    try:
+        allbook = list(BookData.objects.all().order_by('price').values("id","name", "author", "date", "price"))
+
+        return JsonResponse(allbook, safe=False)
+    except:
+        return JsonResponse({'Error':'Please add the book first'}, status=404)
+    
+def book_list_price_d(request):
+    try:
+        allbook = list(BookData.objects.all().order_by('-price').values("id","name", "author", "date", "price"))
+
+        return JsonResponse(allbook, safe=False)
+    except:
+        return JsonResponse({'Error':'Please add the book first'}, status=404)
 
 def title_input(request, title_name):
     request.session['title'] = title_name
@@ -55,15 +76,28 @@ def ac_author_filter(request):
     #     return JsonResponse("")           
 
 def addbook(request, name, author, date, price):
-    book = BookData(
-        name=name,
-        author=author,
-        date=date,
-        price=price
-    )
-    book.save()
-    return redirect("/list")
+    try:
+        book = BookData(
+            name=name,
+            author=author,
+            date=date,
+            price=price
+        )
+        book.save()
+        return redirect("/list")
+    except:
+        return JsonResponse({'Error': 'Please enter correct detail'})
     
+def del_book_id(request, d_num):
+    dbook = BookData.objects.filter(pk=d_num)
+    if dbook.exists():
+        if dbook.count() == 1:
+            dbook.delete()
+            return redirect("/list")
+        else:
+            return JsonResponse({'Error': 'Sorry, there is more than one book that matches your request. Please add its sequence number to the URL to delete a specific one, like:/title/1.'})
+    else:
+        return JsonResponse({'Error': 'No books found with this id'})
 
 def del_book_name(request, d_name):
     dbook = BookData.objects.filter(name = d_name)

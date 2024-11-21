@@ -22,8 +22,13 @@ from .views import *
 urlpatterns = [
     #path("admin/", admin.site.urls),  
     path("list", book_list, name="book_list"),
+    path("list/title", book_list_title, name="book_list_title"),
+    path("list/price+", book_list_price_i, name="book_list_price_i"),
+    path("list/price-", book_list_price_d, name="book_list_price_d"),
+
     path("add/<str:name>/<str:author>/<slug:date>/<str:price>", addbook, name="add"),
     
+    path("d/id/<int:d_num>", del_book_id, name="del_book_id"),
     path("d/n/<str:d_name>", del_book_name, name="del_book_name"),
     path("d/a/<str:d_author>", del_book_author, name="del_book_author"),
     
