@@ -159,8 +159,58 @@ def update_book_data(request, u_id, u_name, u_author, u_date, u_price):
                         }
                     })
 
+#Mario code section for sorting function 
 
-
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookData
+        fields = "__all__"
+        
+def get_books(request):
+    books = BookData.objects.all()
+    serializer = UserSerializer(books,many =True)
+    return JsonResponse(serializer.data,safe=False)
+   
+def get_sorted_books(request,option,sort):
+    #Sorting the title first
+    
+    try:
+        #This is just testing 
+        all_books = BookData.objects.all()
+        map = {}
+        chars = [] 
+        sorted_title = []
+        for i in all_books:
+            map[i.title[0]] = i.title
+            chars.append(i.title[0])
+            
+        for j in sorted(map.keys()):
+            sorted_title.append(map.get(j))         
+        print(sorted_title)
+        try:
+            if str(option) == 'title':
+                sorted_books = BookData.objects.all().order_by('title')
+                serialized = UserSerializer(sorted_books,many=True)
+                return JsonResponse(serialized.data,safe=False)
+            elif str(option) == 'price':#Ascending and Descending ?
+                sorted_books = BookData.objects.all().order_by('price')
+                serialized = UserSerializer(sorted_books,many=True)
+                return JsonResponse(serialized.data,safe=False)
+            elif str(option) == '-price':
+                sorted_books = BookData.objects.all().order_by('-price')
+                serialized = UserSerializer(sorted_books,many=True)
+                return JsonResponse(serialized.data,safe=False) 
+            else:
+                return HttpResponse('<h1>Invalid Option Selected</h1>')
+          
+        except:
+            HttpResponse('<h1>Invalid option Selected</h1>') 
+    
+    except:
+       return HttpResponse('<h1>Something went wrong</h1>') 
+   
+    return HttpResponse('<h1></h1>') 
+    
 
 
 
