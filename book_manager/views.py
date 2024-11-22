@@ -5,7 +5,7 @@ from django.shortcuts import render,redirect, get_object_or_404
 from .models import BookData
 import json
 # Create your views here.
-
+#The book Inventory Management System
 def view_url404(request, exception):
     return JsonResponse({'Error':'Invalid URL'}, status=404)
 
